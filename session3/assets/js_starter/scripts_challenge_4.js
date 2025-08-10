@@ -1,33 +1,39 @@
-// Challenge 4 Starter
-// Get the form element
-
+// Get the form element by id
+const form = document.getElementById('save-me');
 
 // localStorage prefix
 let prefix = 'autosave_';
 
-/**
- * Handle input events
- * @param  {Event} event The event object
- */
-function inputHandler (event) {
-    //
+function inputHandler(event) {
+  const field = event.target;
+  if (field.id) {
+    localStorage.setItem(prefix + field.id, field.value);
+  }
 }
 
-/**
- * Clear all of the saved fields from storage
- */
-function clearStorage () {
-    //
+function clearStorage() {
+  for (let i = localStorage.length - 1; i >= 0; i--) {
+    const key = localStorage.key(i);
+    if (key.startsWith(prefix)) {
+      localStorage.removeItem(key);
+    }
+  }
+  form.reset();
 }
 
-/**
- * Load saved data from localStorage
- */
-function loadSaved () {
-    //
+function loadSaved() {
+  const elements = form.elements;
+  for (let i = 0; i < elements.length; i++) {
+    const el = elements[i];
+    if (el.id) {
+      const savedValue = localStorage.getItem(prefix + el.id);
+      if (savedValue !== null) {
+        el.value = savedValue;
+      }
+    }
+  }
 }
 
-// Load saved data from localStorage
+loadSaved();
 
-
-// Listen for DOM events
+form.addEventListener('input', inputHandler);
