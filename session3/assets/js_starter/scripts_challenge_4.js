@@ -1,39 +1,47 @@
-// Get the form element by id
-const form = document.getElementById('save-me');
+// Get the form element
+let form = document.querySelector("#save-me");
 
 // localStorage prefix
-let prefix = 'autosave_';
+let prefix = "autosave_";
 
+/**
+ * Handle input events
+ * @param  {Event} event The event object
+ */
 function inputHandler(event) {
-  const field = event.target;
-  if (field.id) {
-    localStorage.setItem(prefix + field.id, field.value);
-  }
+  // save the event target
+  let field = event.target;
+
+  localStorage.setItem(prefix + field.id, field.value);
 }
 
+/**
+ * Clear all of the saved fields from storage
+ */
 function clearStorage() {
-  for (let i = localStorage.length - 1; i >= 0; i--) {
-    const key = localStorage.key(i);
-    if (key.startsWith(prefix)) {
-      localStorage.removeItem(key);
-    }
+  let fields = form.elements;
+
+  for (let field of fields) {
+    localStorage.removeItem(prefix + field.id);
   }
-  form.reset();
 }
 
+/**
+ * Load saved data from localStorage
+ */
 function loadSaved() {
-  const elements = form.elements;
-  for (let i = 0; i < elements.length; i++) {
-    const el = elements[i];
-    if (el.id) {
-      const savedValue = localStorage.getItem(prefix + el.id);
-      if (savedValue !== null) {
-        el.value = savedValue;
-      }
-    }
+  //
+  let fields = form.elements;
+
+  for (let field of fields) {
+    let saved = localStorage.getItem(prefix + field.id);
+    if (!saved) continue;
+    field.value = saved;
   }
 }
 
 loadSaved();
 
-form.addEventListener('input', inputHandler);
+// Listen for DOM events
+form.addEventListener("input", inputHandler);
+form.addEventListener("submit", clearStorage);
